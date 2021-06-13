@@ -18,7 +18,7 @@ from fittrackee.workouts.models import Record, Workout, WorkoutSegment
 from fittrackee.workouts.utils_files import get_absolute_file_path
 
 from .decorators import authenticate, authenticate_as_admin
-from .models import User, UserSportPreference
+from .models import FollowRequest, User, UserSportPreference
 
 users_blueprint = Blueprint('users', __name__)
 
@@ -583,3 +583,30 @@ def delete_user(
         OSError,
     ) as e:
         return handle_error_and_return_response(e, db=db)
+
+
+@users_blueprint.route('/users/<user_name>/follow', methods=['POST'])
+@authenticate
+def follow_user(
+    auth_user_id: int, user_name: str
+) -> Union[Dict, HttpResponse]:
+    successful_response_dict = {
+        'status': 'success',
+        'message': f"Follow request to user '{user_name}' is sent.",
+    }
+    target_user = User.query.filter_by(username=user_name).first()
+    if target_user:
+        existing_follow_request = FollowRequest.query.filter_by(
+            follower_user_id=auth_user_id, followed_user_id=target_user.id
+        ).first()
+        if existing_follow_request:
+            if existing_follow_request.is_rejected():
+                return ForbiddenErrorResponse()
+            else:
+                return successful_response_dict
+
+        auth_user = User.query.filter_by(id=auth_user_id).first()
+        auth_user.send_follow_request_to(target_user)
+        return successful_response_dict
+
+    return UserNotFoundErrorResponse()
