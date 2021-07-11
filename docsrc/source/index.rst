@@ -35,5 +35,6 @@ Table of contents
    features
    installation
    api/index
+   federation/index
    troubleshooting/index
    changelog
