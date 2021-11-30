@@ -86,7 +86,7 @@ class TestUserInbox(ApiTestCaseMixin):
         assert response.status_code == 404
         data = json.loads(response.data.decode())
         assert 'not found' in data['status']
-        assert 'User does not exist.' in data['message']
+        assert 'user does not exist' in data['message']
 
     @pytest.mark.parametrize(
         'input_description, input_activity',
@@ -121,7 +121,7 @@ class TestUserInbox(ApiTestCaseMixin):
         assert response.status_code == 400
         data = json.loads(response.data.decode())
         assert 'error' in data['status']
-        assert 'Invalid payload.' in data['message']
+        assert 'invalid payload' in data['message']
 
     def test_it_returns_401_if_headers_are_missing(
         self, app_with_federation: Flask, actor_1: Actor

@@ -16,7 +16,7 @@ from fittrackee.federation.utils import generate_keys, get_ap_url, remove_url_sc
 
 # revision identifiers, used by Alembic.
 revision = '8842c351a2d8'
-down_revision = '4e8597c50064'
+down_revision = '07188ca7620a'
 branch_labels = None
 depends_on = None
 

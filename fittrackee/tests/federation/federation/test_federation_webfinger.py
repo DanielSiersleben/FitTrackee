@@ -62,7 +62,7 @@ class TestWebfinger:
         assert response.status_code == 404
         data = json.loads(response.data.decode())
         assert 'not found' in data['status']
-        assert 'User does not exist.' in data['message']
+        assert 'user does not exist' in data['message']
 
     def test_it_returns_404_if_domain_is_not_instance_domain(
         self, app_with_federation: Flask, actor_1: Actor
@@ -77,7 +77,7 @@ class TestWebfinger:
         assert response.status_code == 404
         data = json.loads(response.data.decode())
         assert 'not found' in data['status']
-        assert 'User does not exist.' in data['message']
+        assert 'user does not exist' in data['message']
 
     def test_it_returns_json_resource_descriptor_as_content_type(
         self, app_with_federation: Flask, actor_1: Actor

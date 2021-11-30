@@ -69,7 +69,7 @@ def get_actor(app_domain: Domain, preferred_username: str) -> HttpResponse:
 
     :statuscode 200: success
     :statuscode 403: Error. Federation is disabled for this instance.
-    :statuscode 404: User does not exist.
+    :statuscode 404: user does not exist
 
     """
     actor = Actor.query.filter_by(
@@ -142,12 +142,12 @@ def remote_actor(
 
     :statuscode 200: success
     :statuscode 400:
-      - Invalid payload.
+      - invalid payload
       - The provided account is not a remote account.
       - Can not fetch remote actor.
       - Invalid remote actor object.
     :statuscode 401:
-        - Provide a valid auth token.
+        - provide a valid auth token
         - Signature expired. Please log in again.
         - Invalid token. Please log in again.
     :statuscode 403: Error. Federation is disabled for this instance.
@@ -201,9 +201,9 @@ def user_inbox(
     :<json json activity: activity
 
     :statuscode 200: success
-    :statuscode 400: Invalid payload.
+    :statuscode 400: invalid payload
     :statuscode 403: Error. Federation is disabled for this instance.
-    :statuscode 404: User does not exist.
+    :statuscode 404: user does not exist
 
     """
     return inbox(request, app_domain, preferred_username)

@@ -59,7 +59,7 @@ class TestWellKnowNodeInfo:
         data = json.loads(response.data.decode())
         assert 'error' in data['status']
         assert (
-            'Error. Please try again or contact the administrator.'
+            'error, please try again or contact the administrator'
             in data['message']
         )
 

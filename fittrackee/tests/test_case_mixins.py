@@ -67,7 +67,7 @@ class ApiTestCaseMixin:
         self, url: str, client: FlaskClient, auth_token: str
     ) -> None:
         self.assert_return_not_found(
-            url, client, auth_token, 'User does not exist.'
+            url, client, auth_token, 'user does not exist'
         )
 
 

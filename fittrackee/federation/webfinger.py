@@ -56,7 +56,7 @@ def webfinger(app_domain: Domain) -> HttpResponse:
       - Missing resource in request args.
       - Invalid resource.
     :statuscode 403: Error. Federation is disabled for this instance.
-    :statuscode 404: User does not exist.
+    :statuscode 404: user does not exist
 
     """
     resource = request.args.get('resource')

@@ -24,7 +24,7 @@ class TestFederationUser:
         assert response.status_code == 404
         data = json.loads(response.data.decode())
         assert 'not found' in data['status']
-        assert 'User does not exist.' in data['message']
+        assert 'user does not exist' in data['message']
 
     def test_it_returns_json_resource_descriptor_as_content_type(
         self, app_with_federation: Flask, actor_1: Actor
@@ -98,7 +98,7 @@ class TestRemoteUser(ApiTestCaseMixin):
         assert response.status_code == 401
         data = json.loads(response.data.decode())
         assert 'error' in data['status']
-        assert 'Provide a valid auth token.' in data['message']
+        assert 'provide a valid auth token' in data['message']
 
     def test_it_returns_400_if_remote_user_url_is_missing(
         self, app_with_federation: Flask, actor_1: Actor
