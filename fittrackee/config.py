@@ -1,11 +1,11 @@
 import os
-from pathlib import Path
 
 from dramatiq.brokers.redis import RedisBroker
 from dramatiq.brokers.stub import StubBroker
 from flask import current_app
 from sqlalchemy.pool import NullPool
 
+from fittrackee import VERSION
 from fittrackee.federation.utils import remove_url_scheme
 
 if os.getenv('APP_SETTINGS') == 'fittrackee.config.TestingConfig':
@@ -49,7 +49,7 @@ class BaseConfig:
             os.environ.get('DEFAULT_STATICMAP', 'False') == 'True'
         ),
     }
-    VERSION = (Path(f'{current_app.root_path}/VERSION')).read_text().strip()
+    VERSION = VERSION
     # ActivityPub
     AP_DOMAIN = remove_url_scheme(UI_URL)
 
