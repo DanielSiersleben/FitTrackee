@@ -16,6 +16,7 @@ def init_database(app: Flask) -> None:
     admin.admin = True
     admin.timezone = 'Europe/Paris'
     db.session.add(admin)
+    admin.create_actor()
     db.session.commit()
     _, db_app_config = init_config()
     update_app_config_from_database(app, db_app_config)
