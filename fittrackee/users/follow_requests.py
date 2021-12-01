@@ -31,7 +31,7 @@ MAX_FOLLOW_REQUESTS_PER_PAGE = 50
 
 @follow_requests_blueprint.route('/follow_requests', methods=['GET'])
 @authenticate
-def get_follow_requests(auth_user_id: int) -> Dict:
+def get_follow_requests(auth_user: User) -> Dict:
     params = request.args.copy()
     page = int(params.get('page', 1))
     per_page = int(params.get('per_page', FOLLOW_REQUESTS_PER_PAGE))
@@ -40,7 +40,7 @@ def get_follow_requests(auth_user_id: int) -> Dict:
         per_page = MAX_FOLLOW_REQUESTS_PER_PAGE
     follow_requests_pagination = (
         FollowRequest.query.filter_by(
-            followed_user_id=auth_user_id,
+            followed_user_id=auth_user.id,
             updated_at=None,
         )
         .order_by(
@@ -69,7 +69,7 @@ def get_follow_requests(auth_user_id: int) -> Dict:
 
 
 def process_follow_request(
-    auth_user_id: int, user_name: str, action: str
+    auth_user: User, user_name: str, action: str
 ) -> Union[Dict, HttpResponse]:
     try:
         from_user = get_user_from_username(user_name)
@@ -81,12 +81,11 @@ def process_follow_request(
         appLog.error(f'Error when accepting follow request: {e}')
         return UserNotFoundErrorResponse()
 
-    current_user = User.query.filter_by(id=auth_user_id).first()
     try:
         if action == 'accept':
-            current_user.approves_follow_request_from(from_user)
+            auth_user.approves_follow_request_from(from_user)
         else:  # action == 'reject'
-            current_user.rejects_follow_request_from(from_user)
+            auth_user.rejects_follow_request_from(from_user)
     except NotExistingFollowRequestError:
         return NotFoundErrorResponse(message='Follow request does not exist.')
     except FollowRequestAlreadyProcessedError:
@@ -107,9 +106,9 @@ def process_follow_request(
 )
 @authenticate
 def accept_follow_request(
-    auth_user_id: int, user_name: str
+    auth_user: User, user_name: str
 ) -> Union[Dict, HttpResponse]:
-    return process_follow_request(auth_user_id, user_name, 'accept')
+    return process_follow_request(auth_user, user_name, 'accept')
 
 
 @follow_requests_blueprint.route(
@@ -117,6 +116,6 @@ def accept_follow_request(
 )
 @authenticate
 def reject_follow_request(
-    auth_user_id: int, user_name: str
+    auth_user: User, user_name: str
 ) -> Union[Dict, HttpResponse]:
-    return process_follow_request(auth_user_id, user_name, 'reject')
+    return process_follow_request(auth_user, user_name, 'reject')

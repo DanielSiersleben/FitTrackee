@@ -10,6 +10,7 @@ from fittrackee.responses import (
     UserNotFoundErrorResponse,
 )
 from fittrackee.users.decorators import authenticate
+from fittrackee.users.models import User
 
 from .decorators import federation_required
 from .inbox import inbox
@@ -89,7 +90,7 @@ def get_actor(app_domain: Domain, preferred_username: str) -> HttpResponse:
 @federation_required
 @authenticate
 def remote_actor(
-    app_domain: Domain, auth_user_id: int
+    app_domain: Domain, auth_user: User
 ) -> Union[Dict, HttpResponse]:
     """
     Add a remote actor to local instance if it does not exist.
@@ -133,8 +134,6 @@ def remote_actor(
           "sharedInbox": "https://remote-instance.social/inbox"
         }
       }
-
-    :param integer auth_user_id: authenticate user id (from JSON Web Token)
 
     :<json string actor_url: remote actor activitypub id
 

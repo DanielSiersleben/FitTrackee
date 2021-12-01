@@ -596,9 +596,7 @@ def delete_user(
 
 @users_blueprint.route('/users/<user_name>/follow', methods=['POST'])
 @authenticate
-def follow_user(
-    auth_user_id: int, user_name: str
-) -> Union[Dict, HttpResponse]:
+def follow_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
     successful_response_dict = {
         'status': 'success',
         'message': f"Follow request to user '{user_name}' is sent.",
@@ -614,9 +612,8 @@ def follow_user(
         appLog.error(f'Error when following a user: {e}')
         return UserNotFoundErrorResponse()
 
-    follower_user = User.query.filter_by(id=auth_user_id).first()
     try:
-        follower_user.send_follow_request_to(target_user)
+        auth_user.send_follow_request_to(target_user)
     except FollowRequestAlreadyRejectedError:
         return ForbiddenErrorResponse()
     return successful_response_dict
