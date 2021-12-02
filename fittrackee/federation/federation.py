@@ -4,15 +4,23 @@ from flask import Blueprint, request
 
 from fittrackee.federation.exceptions import RemoteActorException
 from fittrackee.federation.utils_user import create_remote_user
-from fittrackee.responses import HttpResponse, InvalidPayloadErrorResponse
+from fittrackee.responses import (
+    HttpResponse,
+    InvalidPayloadErrorResponse,
+    handle_error_and_return_response,
+)
 from fittrackee.users.decorators import authenticate
-from fittrackee.users.models import User
+from fittrackee.users.models import FollowRequest, User
 
+from .collections import OrderedCollection, OrderedCollectionPage
 from .decorators import federation_required, get_local_actor_from_username
 from .inbox import inbox
 from .models import Actor, Domain
 
 ap_federation_blueprint = Blueprint('ap_federation', __name__)
+
+
+USERS_PER_PAGE = 10
 
 
 @ap_federation_blueprint.route(
@@ -199,3 +207,52 @@ def user_inbox(
 
     """
     return inbox(request)
+
+
+def get_relationships(
+    local_actor: Actor, relation: str
+) -> Union[Dict, HttpResponse]:
+    params = request.args.copy()
+    page = params.get('page')
+
+    if relation == 'followers':
+        relations_object = local_actor.user.followers
+        url = local_actor.followers_url
+    else:
+        relations_object = local_actor.user.following
+        url = local_actor.following_url
+
+    if page is None:
+        collection = OrderedCollection(url, relations_object)
+        return collection.serialize()
+
+    try:
+        paginated_relations = relations_object.order_by(
+            FollowRequest.updated_at.desc()
+        ).paginate(int(page), USERS_PER_PAGE, False)
+        collection_page = OrderedCollectionPage(url, paginated_relations)
+        return collection_page.serialize()
+    except ValueError as e:
+        return handle_error_and_return_response(e)
+
+
+@ap_federation_blueprint.route(
+    '/user/<string:preferred_username>/followers', methods=['GET']
+)
+@federation_required
+@get_local_actor_from_username
+def user_followers(
+    local_actor: Actor, app_domain: Domain, preferred_username: str
+) -> Union[Dict, HttpResponse]:
+    return get_relationships(local_actor, relation='followers')
+
+
+@ap_federation_blueprint.route(
+    '/user/<string:preferred_username>/following', methods=['GET']
+)
+@federation_required
+@get_local_actor_from_username
+def user_following(
+    local_actor: Actor, app_domain: Domain, preferred_username: str
+) -> Union[Dict, HttpResponse]:
+    return get_relationships(local_actor, relation='following')
