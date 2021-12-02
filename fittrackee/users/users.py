@@ -28,6 +28,7 @@ from .exceptions import (
     UserNotFoundException,
 )
 from .models import User, UserSportPreference
+from .roles import UserRole
 
 users_blueprint = Blueprint('users', __name__)
 
@@ -210,9 +211,10 @@ def get_users(auth_user: User) -> Dict:
         .paginate(page, per_page, False)
     )
     users = users_pagination.items
+    role = UserRole.ADMIN if auth_user.admin else UserRole.USER
     return {
         'status': 'success',
-        'data': {'users': [user.serialize() for user in users]},
+        'data': {'users': [user.serialize(role) for user in users]},
         'pagination': {
             'has_next': users_pagination.has_next,
             'has_prev': users_pagination.has_prev,
@@ -327,10 +329,11 @@ def get_single_user(
     """
     try:
         user = User.query.filter_by(username=user_name).first()
+        role = UserRole.ADMIN if auth_user.admin else UserRole.USER
         if user:
             return {
                 'status': 'success',
-                'data': {'users': [user.serialize()]},
+                'data': {'users': [user.serialize(role=role)]},
             }
     except ValueError:
         pass
@@ -494,7 +497,7 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
         db.session.commit()
         return {
             'status': 'success',
-            'data': {'users': [user.serialize()]},
+            'data': {'users': [user.serialize(role=UserRole.ADMIN)]},
         }
     except exc.StatementError as e:
         return handle_error_and_return_response(e, db=db)

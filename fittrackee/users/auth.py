@@ -26,6 +26,7 @@ from fittrackee.workouts.utils_files import get_absolute_file_path
 
 from .decorators import authenticate
 from .models import User, UserSportPreference
+from .roles import UserRole
 from .utils import check_passwords, register_controls
 from .utils_token import decode_user_token
 
@@ -383,7 +384,10 @@ def get_authenticated_user_profile(
         - invalid token, please log in again
 
     """
-    return {'status': 'success', 'data': auth_user.serialize()}
+    return {
+        'status': 'success',
+        'data': auth_user.serialize(role=UserRole.AUTH_USER),
+    }
 
 
 @auth_blueprint.route('/auth/profile/edit', methods=['POST'])
@@ -540,7 +544,7 @@ def edit_user(auth_user: User) -> Union[Dict, HttpResponse]:
         return {
             'status': 'success',
             'message': 'user profile updated',
-            'data': auth_user.serialize(),
+            'data': auth_user.serialize(role=UserRole.AUTH_USER),
         }
 
     # handler errors
@@ -679,7 +683,7 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
         return {
             'status': 'success',
             'message': 'user preferences updated',
-            'data': auth_user.serialize(),
+            'data': auth_user.serialize(role=UserRole.AUTH_USER),
         }
 
     # handler errors
