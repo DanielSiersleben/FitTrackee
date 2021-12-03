@@ -224,23 +224,18 @@ Otherwise it updates it.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Request JSON Object</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>auth_user_id</strong> (<em>integer</em>) – authenticate user id (from JSON Web Token)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Request JSON Object</dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>actor_url</strong> (<em>string</em>) – remote actor activitypub id</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Request Headers</dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Request Headers</dt>
+<dd class="field-even"><ul class="simple">
 <li><p><span><a class="reference external" href="https://tools.ietf.org/html/rfc7235#section-4.2">Authorization</a></span> – OAuth 2.0 Bearer Token</p></li>
 </ul>
 </dd>
-<dt class="field-even">Status Codes</dt>
-<dd class="field-even"><ul class="simple">
+<dt class="field-odd">Status Codes</dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – success</p></li>
 <li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a></span> – <ul>
 <li><p>invalid payload</p></li>
@@ -296,6 +291,148 @@ Otherwise it updates it.</p>
 <li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a></span> – invalid payload</p></li>
 <li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Error. Federation is disabled for this instance.</p></li>
 <li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a></span> – user does not exist</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--federation-user-(string-preferred_username)-followers">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/federation/user/</span></span><span class="sig-paren">(</span><em class="property"><span class="pre">string:</span> </em><em class="sig-param"><span class="pre">preferred_username</span></em><span class="sig-paren">)</span><span class="sig-name descname"><span class="pre">/followers</span></span><a class="headerlink" href="#get--federation-user-(string-preferred_username)-followers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get local actor followers</p>
+<ul class="simple">
+<li><p>ordered collection</p></li>
+</ul>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/federation/user/sam/followers</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/jrd+json; charset=utf-8</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;@context&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.w3.org/ns/activitystreams&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/followers?page=1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/followers&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;totalItems&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;OrderedCollection&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>ordered collection page</p></li>
+</ul>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/federation/user/sam/followers?page=1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/jrd+json; charset=utf-8</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;@context&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.w3.org/ns/activitystreams&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/followers?page=1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;orderedItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;https://another-instance.com/users/admin&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;partOf&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/followers&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;totalItems&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;OrderedCollectionPage&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preferred_username</strong> (<em>string</em>) – actor preferred username</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>page</strong> (<em>integer</em>) – page if using pagination (default: 1)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Status Codes</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – success</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Error. Federation is disabled for this instance.</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a></span> – user does not exist</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a></span> – error, please try again or contact the administrator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="http get">
+<dt class="sig sig-object http" id="get--federation-user-(string-preferred_username)-following">
+<span class="sig-name descname"><span class="pre">GET</span> </span><span class="sig-name descname"><span class="pre">/federation/user/</span></span><span class="sig-paren">(</span><em class="property"><span class="pre">string:</span> </em><em class="sig-param"><span class="pre">preferred_username</span></em><span class="sig-paren">)</span><span class="sig-name descname"><span class="pre">/following</span></span><a class="headerlink" href="#get--federation-user-(string-preferred_username)-following" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get local actor following</p>
+<ul class="simple">
+<li><p>ordered collection</p></li>
+</ul>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/federation/user/sam/following</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/jrd+json; charset=utf-8</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;@context&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.w3.org/ns/activitystreams&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;first&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/following?page=1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/following&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;totalItems&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;OrderedCollection&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>ordered collection page</p></li>
+</ul>
+<p><strong>Example request</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="nf">GET</span> <span class="nn">/federation/user/sam/following?page=1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+</pre></div>
+</div>
+<p><strong>Example response</strong>:</p>
+<div class="highlight-http notranslate"><div class="highlight"><pre><span></span><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/jrd+json; charset=utf-8</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;@context&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.w3.org/ns/activitystreams&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/following?page=1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;orderedItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;https://another-instance.com/users/admin&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;partOf&quot;</span><span class="p">:</span> <span class="s2">&quot;https://example.com/federation/user/Sam/following&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;totalItems&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;OrderedCollectionPage&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preferred_username</strong> (<em>string</em>) – actor preferred username</p></li>
+</ul>
+</dd>
+<dt class="field-even">Query Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>page</strong> (<em>integer</em>) – page if using pagination (default: 1)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Status Codes</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a></span> – success</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a></span> – Error. Federation is disabled for this instance.</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a></span> – user does not exist</p></li>
+<li><p><span><a class="reference external" href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1">500 Internal Server Error</a></span> – error, please try again or contact the administrator</p></li>
 </ul>
 </dd>
 </dl>

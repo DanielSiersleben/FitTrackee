@@ -5,4 +5,6 @@ Federation
    :endpoints:
     ap_federation.get_actor,
     ap_federation.remote_actor,
-    ap_federation.user_inbox
+    ap_federation.user_inbox,
+    ap_federation.user_followers,
+    ap_federation.user_following

@@ -244,6 +244,70 @@ def get_relationships(
 def user_followers(
     local_actor: Actor, app_domain: Domain, preferred_username: str
 ) -> Union[Dict, HttpResponse]:
+    """
+    Get local actor followers
+
+    - ordered collection
+
+    **Example request**:
+
+    .. sourcecode:: http
+
+      GET /federation/user/sam/followers HTTP/1.1
+      Content-Type: application/json
+
+    **Example response**:
+
+    .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/jrd+json; charset=utf-8
+
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "first": "https://example.com/federation/user/Sam/followers?page=1",
+        "id": "https://example.com/federation/user/Sam/followers",
+        "totalItems": 1,
+        "type": "OrderedCollection"
+      }
+
+    - ordered collection page
+
+    **Example request**:
+
+    .. sourcecode:: http
+
+      GET /federation/user/sam/followers?page=1 HTTP/1.1
+      Content-Type: application/json
+
+    **Example response**:
+
+    .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/jrd+json; charset=utf-8
+
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "id": "https://example.com/federation/user/Sam/followers?page=1",
+        "orderedItems": [
+          "https://another-instance.com/users/admin"
+        ],
+        "partOf": "https://example.com/federation/user/Sam/followers",
+        "totalItems": 1,
+        "type": "OrderedCollectionPage"
+      }
+
+    :param string preferred_username: actor preferred username
+
+    :query integer page: page if using pagination (default: 1)
+
+    :statuscode 200: success
+    :statuscode 403: Error. Federation is disabled for this instance.
+    :statuscode 404: user does not exist
+    :statuscode 500: error, please try again or contact the administrator
+
+    """
     return get_relationships(local_actor, relation='followers')
 
 
@@ -255,4 +319,68 @@ def user_followers(
 def user_following(
     local_actor: Actor, app_domain: Domain, preferred_username: str
 ) -> Union[Dict, HttpResponse]:
+    """
+    Get local actor following
+
+    - ordered collection
+
+    **Example request**:
+
+    .. sourcecode:: http
+
+      GET /federation/user/sam/following HTTP/1.1
+      Content-Type: application/json
+
+    **Example response**:
+
+    .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/jrd+json; charset=utf-8
+
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "first": "https://example.com/federation/user/Sam/following?page=1",
+        "id": "https://example.com/federation/user/Sam/following",
+        "totalItems": 1,
+        "type": "OrderedCollection"
+      }
+
+    - ordered collection page
+
+    **Example request**:
+
+    .. sourcecode:: http
+
+      GET /federation/user/sam/following?page=1 HTTP/1.1
+      Content-Type: application/json
+
+    **Example response**:
+
+    .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/jrd+json; charset=utf-8
+
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "id": "https://example.com/federation/user/Sam/following?page=1",
+        "orderedItems": [
+          "https://another-instance.com/users/admin"
+        ],
+        "partOf": "https://example.com/federation/user/Sam/following",
+        "totalItems": 1,
+        "type": "OrderedCollectionPage"
+      }
+
+    :param string preferred_username: actor preferred username
+
+    :query integer page: page if using pagination (default: 1)
+
+    :statuscode 200: success
+    :statuscode 403: Error. Federation is disabled for this instance.
+    :statuscode 404: user does not exist
+    :statuscode 500: error, please try again or contact the administrator
+
+    """
     return get_relationships(local_actor, relation='following')
