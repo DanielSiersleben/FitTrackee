@@ -11,4 +11,5 @@ API documentation
    sports
    stats
    users
+   follow_requests
    workouts
