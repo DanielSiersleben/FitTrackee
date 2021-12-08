@@ -2,7 +2,7 @@ import json
 
 from flask import Flask
 
-from fittrackee.federation.models import Actor
+from fittrackee.users.models import User
 from fittrackee.workouts.models import Sport, Workout
 
 
@@ -25,7 +25,7 @@ class TestWellKnowNodeInfo:
         )
 
     def test_it_returns_instance_nodeinfo_url_if_federation_is_enabled(
-        self, app_with_federation: Flask, actor_1: Actor
+        self, app_with_federation: Flask, user_1: User
     ) -> None:
         client = app_with_federation.test_client()
         response = client.get(
@@ -85,7 +85,7 @@ class TestNodeInfo:
     def test_it_returns_instance_nodeinfo_if_federation_is_enabled(
         self,
         app_with_federation: Flask,
-        actor_1: Actor,
+        user_1: User,
         app_version: str,
     ) -> None:
         client = app_with_federation.test_client()
@@ -107,7 +107,7 @@ class TestNodeInfo:
     def test_it_displays_workouts_count(
         self,
         app_with_federation: Flask,
-        actor_1: Actor,
+        user_1: User,
         sport_1_cycling: Sport,
         workout_cycling_user_1: Workout,
         app_version: str,
@@ -125,8 +125,8 @@ class TestNodeInfo:
     def test_only_local_actors_are_counted(
         self,
         app_with_federation: Flask,
-        actor_1: Actor,
-        remote_actor: Actor,
+        user_1: User,
+        remote_user: User,
         app_version: str,
     ) -> None:
         client = app_with_federation.test_client()
@@ -143,7 +143,7 @@ class TestNodeInfo:
     def test_it_displays_if_registration_is_disabled(
         self,
         app_with_federation: Flask,
-        actor_1: Actor,
+        user_1: User,
         sport_1_cycling: Sport,
         workout_cycling_user_1: Workout,
         app_version: str,
