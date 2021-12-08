@@ -403,6 +403,7 @@ class TestSignatureDigestVerification(SignatureVerificationTestCase):
 
 
 class TestSignatureVerify(SignatureVerificationTestCase):
+    @pytest.mark.disable_autouse_generate_keys
     def test_it_raises_error_if_header_actor_is_different_from_activity_actor(
         self, app_with_federation: Flask, user_1: User, user_2: User
     ) -> None:
@@ -427,6 +428,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_raises_error_if_header_date_is_invalid(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -454,6 +456,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_raises_error_if_public_key_is_invalid(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -477,6 +480,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_raises_error_if_algorithm_is_not_supported(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -506,6 +510,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_raises_error_if_http_digest_is_invalid(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -533,6 +538,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_raises_error_if_signature_is_invalid_due_to_keys_update(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -561,6 +567,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
             ):
                 sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_does_not_raise_error_if_signature_is_valid(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
@@ -584,6 +591,7 @@ class TestSignatureVerify(SignatureVerificationTestCase):
 
             sig_verification.verify()
 
+    @pytest.mark.disable_autouse_generate_keys
     def test_verify_does_not_raise_error_if_signature_without_digest_is_valid(
         self, app_with_federation: Flask, user_1: User
     ) -> None:
