@@ -337,6 +337,10 @@ class User(BaseModel):
         self.actor_id = actor.id
         db.session.commit()
 
+    @property
+    def is_remote(self) -> bool:
+        return self.actor.is_remote
+
     def serialize(self, role: Optional[UserRole] = None) -> Dict:
         sports = []
         total = (0, '0:00:00')
@@ -364,6 +368,7 @@ class User(BaseModel):
             'bio': self.bio,
             'followers': self.followers.count(),
             'following': self.following.count(),
+            'is_remote': self.is_remote,
             'location': self.location,
             'birth_date': self.birth_date,
             'picture': self.picture is not None,
