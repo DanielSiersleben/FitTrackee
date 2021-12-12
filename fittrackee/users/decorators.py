@@ -5,7 +5,7 @@ from flask import request
 
 from fittrackee.responses import HttpResponse
 
-from .utils import verify_user
+from .utils import get_auth_user, verify_user
 
 
 def verify_auth_user(
@@ -35,5 +35,16 @@ def authenticate_as_admin(f: Callable) -> Callable:
     ) -> Union[Callable, HttpResponse]:
         verify_admin = True
         return verify_auth_user(f, verify_admin, *args, **kwargs)
+
+    return decorated_function
+
+
+def get_auth_user_if_authenticated(f: Callable) -> Callable:
+    @wraps(f)
+    def decorated_function(
+        *args: Any, **kwargs: Any
+    ) -> Union[Callable, HttpResponse]:
+        user = get_auth_user(request)
+        return f(user, *args, **kwargs)
 
     return decorated_function

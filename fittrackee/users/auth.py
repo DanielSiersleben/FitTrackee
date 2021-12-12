@@ -26,6 +26,7 @@ from fittrackee.workouts.utils_files import get_absolute_file_path
 
 from .decorators import authenticate
 from .models import User, UserSportPreference
+from .privacy_levels import PrivacyLevel
 from .roles import UserRole
 from .utils import check_passwords, register_controls
 from .utils_token import decode_user_token
@@ -323,6 +324,7 @@ def get_authenticated_user_profile(
           "language": "en",
           "last_name": null,
           "location": null,
+          "map_visibility": "private",
           "nb_sports": 3,
           "nb_workouts": 6,
           "picture": false,
@@ -373,7 +375,8 @@ def get_authenticated_user_profile(
           "total_distance": 67.895,
           "total_duration": "6:50:27",
           "username": "sam",
-          "weekm": false
+          "weekm": false,
+          "workouts_visibility": "private"
         },
         "status": "success"
       }
@@ -428,6 +431,7 @@ def edit_user(auth_user: User) -> Union[Dict, HttpResponse]:
           "language": "en",
           "last_name": null,
           "location": null,
+          "map_visibility": "private",
           "nb_sports": 3,
           "nb_workouts": 6,
           "picture": false,
@@ -479,6 +483,7 @@ def edit_user(auth_user: User) -> Union[Dict, HttpResponse]:
           "total_duration": "6:50:27",
           "username": "sam"
           "weekm": true,
+          "workouts_visibility": "private"
         },
         "message": "user profile updated",
         "status": "success"
@@ -593,6 +598,7 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
           "language": "en",
           "last_name": null,
           "location": null,
+          "map_visibility": "followers_only",
           "nb_sports": 3,
           "nb_workouts": 6,
           "picture": false,
@@ -642,8 +648,9 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
           "timezone": "Europe/Paris",
           "total_distance": 67.895,
           "total_duration": "6:50:27",
-          "username": "sam"
+          "username": "sam",
           "weekm": true,
+          "workouts_visibility": "public"
         },
         "message": "user preferences updated",
         "status": "success"
@@ -652,6 +659,10 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
     :<json string timezone: user time zone
     :<json string weekm: does week start on Monday?
     :<json string language: language preferences
+    :<json string map_visibility: workouts map visibility
+                                  ('public', 'followers_only', 'private')
+    :<json string workouts_visibility: user workouts visibility
+                                      ('public', 'followers_only', 'private')
 
     :reqheader Authorization: OAuth 2.0 Bearer Token
 
@@ -673,6 +684,8 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
         'language',
         'timezone',
         'weekm',
+        'map_visibility',
+        'workouts_visibility',
     }
     if not post_data or not post_data.keys() >= user_mandatory_data:
         return InvalidPayloadErrorResponse()
@@ -681,12 +694,16 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
     language = post_data.get('language')
     timezone = post_data.get('timezone')
     weekm = post_data.get('weekm')
+    map_visibility = post_data.get('map_visibility')
+    workouts_visibility = post_data.get('workouts_visibility')
 
     try:
         auth_user.imperial_units = imperial_units
         auth_user.language = language
         auth_user.timezone = timezone
         auth_user.weekm = weekm
+        auth_user.map_visibility = PrivacyLevel(map_visibility)
+        auth_user.workouts_visibility = PrivacyLevel(workouts_visibility)
         db.session.commit()
 
         return {

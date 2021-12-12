@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from flask import Blueprint, request, send_file
 from sqlalchemy import exc
@@ -24,7 +24,11 @@ from fittrackee.responses import (
 from fittrackee.workouts.models import Record, Workout, WorkoutSegment
 from fittrackee.workouts.utils_files import get_absolute_file_path
 
-from .decorators import authenticate, authenticate_as_admin
+from .decorators import (
+    authenticate,
+    authenticate_as_admin,
+    get_auth_user_if_authenticated,
+)
 from .exceptions import (
     FollowRequestAlreadyRejectedError,
     UserNotFoundException,
@@ -139,6 +143,7 @@ def get_users(auth_user: User) -> Dict:
               "is_remote": false,
               "last_name": null,
               "location": null,
+              "map_visibility": "private",
               "nb_sports": 3,
               "nb_workouts": 6,
               "picture": false,
@@ -187,7 +192,8 @@ def get_users(auth_user: User) -> Dict:
               ],
               "total_distance": 67.895,
               "total_duration": "6:50:27",
-              "username": "admin"
+              "username": "admin",
+              "workouts_visibility": "private"
             },
             {
               "admin": false,
@@ -201,6 +207,7 @@ def get_users(auth_user: User) -> Dict:
               "is_remote": false,
               "last_name": null,
               "location": null,
+              "map_visibility": "private",
               "nb_sports": 0,
               "nb_workouts": 0,
               "picture": false,
@@ -208,7 +215,8 @@ def get_users(auth_user: User) -> Dict:
               "sports_list": [],
               "total_distance": 0,
               "total_duration": "0:00:00",
-              "username": "sam"
+              "username": "sam",
+              "workouts_visibility": "private"
             }
           ]
         },
@@ -282,6 +290,7 @@ def get_remote_users(
               "is_remote": true,
               "last_name": null,
               "location": null,
+              "map_visibility": "private",
               "nb_sports": 0,
               "nb_workouts": 0,
               "picture": false,
@@ -289,7 +298,8 @@ def get_remote_users(
               "sports_list": [],
               "total_distance": 0,
               "total_duration": "0:00:00",
-              "username": "sam"
+              "username": "sam",
+              "workouts_visibility": "private"
             }
           ]
         },
@@ -318,9 +328,9 @@ def get_remote_users(
 
 
 @users_blueprint.route('/users/<user_name>', methods=['GET'])
-@authenticate
+@get_auth_user_if_authenticated
 def get_single_user(
-    auth_user: User, user_name: str
+    auth_user: Optional[User], user_name: str
 ) -> Union[Dict, HttpResponse]:
     """
     Get single user details.
@@ -334,6 +344,8 @@ def get_single_user(
       Content-Type: application/json
 
     **Example response**:
+
+    - when a user is authenticated:
 
     .. sourcecode:: http
 
@@ -354,6 +366,7 @@ def get_single_user(
             "is_remote": false,
             "last_name": null,
             "location": null,
+            "map_visibility": "private",
             "nb_sports": 3,
             "nb_workouts": 6,
             "picture": false,
@@ -402,7 +415,39 @@ def get_single_user(
             ],
             "total_distance": 67.895,
             "total_duration": "6:50:27",
-            "username": "admin"
+            "username": "admin",
+            "workouts_visibility": "private"
+          }
+        ],
+        "status": "success"
+      }
+
+    - when no authentication:
+
+    .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Content-Type: application/json
+
+      {
+        "data": [
+          {
+            "admin": true,
+            "bio": null,
+            "birth_date": null,
+            "created_at": "Sun, 14 Jul 2019 14:09:58 GMT",
+            "email": "admin@example.com",
+            "first_name": null,
+            "followers": 0,
+            "following": 0,
+            "is_remote": false,
+            "last_name": null,
+            "location": null,
+            "map_visibility": "private",
+            "nb_workouts": 6,
+            "picture": false,
+            "username": "admin",
+            "workouts_visibility": "private"
           }
         ],
         "status": "success"
@@ -410,7 +455,7 @@ def get_single_user(
 
     :param integer user_name: user name
 
-    :reqheader Authorization: OAuth 2.0 Bearer Token
+    :reqheader Authorization: OAuth 2.0 Bearer Token if user is authenticated
 
     :statuscode 200: success
     :statuscode 401:
@@ -420,9 +465,11 @@ def get_single_user(
     :statuscode 404:
         - user does not exist
     """
+    role = None
+    if auth_user is not None:
+        role = UserRole.ADMIN if auth_user.admin else UserRole.USER
     try:
         user = User.query.filter_by(username=user_name).first()
-        role = UserRole.ADMIN if auth_user.admin else UserRole.USER
         if user:
             return {
                 'status': 'success',
@@ -507,6 +554,7 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
             "is_remote": false,
             "last_name": null,
             "location": null,
+            "map_visibility": "private",
             "nb_workouts": 6,
             "nb_sports": 3,
             "picture": false,
@@ -555,7 +603,8 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
             ],
             "total_distance": 67.895,
             "total_duration": "6:50:27",
-            "username": "admin"
+            "username": "admin",
+            "workouts_visibility": "private"
           }
         ],
         "status": "success"
@@ -854,6 +903,7 @@ def get_followers(
               "is_remote": false,
               "last_name": null,
               "location": null,
+              "map_visibility": "followers_only",
               "nb_sports": 0,
               "nb_workouts": 0,
               "picture": false,
@@ -861,7 +911,8 @@ def get_followers(
               "sports_list": [],
               "total_distance": 0.0,
               "total_duration": "0:00:00",
-              "username": "JohnDoe"
+              "username": "JohnDoe",
+              "workouts_visibility": "followers_only"
             }
           ]
         },
@@ -942,6 +993,7 @@ def get_following(
               "is_remote": false,
               "last_name": null,
               "location": null,
+              "map_visibility": "followers_only",
               "nb_sports": 0,
               "nb_workouts": 0,
               "picture": false,
@@ -949,7 +1001,8 @@ def get_following(
               "sports_list": [],
               "total_distance": 0.0,
               "total_duration": "0:00:00",
-              "username": "JohnDoe"
+              "username": "JohnDoe",
+              "workouts_visibility": "followers_only"
             }
           ]
         },

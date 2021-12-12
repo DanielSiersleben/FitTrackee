@@ -84,3 +84,19 @@ def can_view_workout(
     if auth_user_id != workout_user_id:
         return ForbiddenErrorResponse()
     return None
+
+
+def get_auth_user(
+    current_request: Request,
+) -> Optional[User]:
+    """
+    Return user if a user is authenticated
+    """
+    user = None
+    auth_header = current_request.headers.get('Authorization')
+    if auth_header:
+        auth_token = auth_header.split(' ')[1]
+        resp = User.decode_auth_token(auth_token)
+        if isinstance(resp, int):
+            user = User.query.filter_by(id=resp).first()
+    return user

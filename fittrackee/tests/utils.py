@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
-from json import dumps
+from json import dumps, loads
 from typing import Dict, Optional, Union
 from uuid import uuid4
 
+from flask import json as flask_json
 from requests import Response
 
 from fittrackee import db
@@ -137,3 +138,7 @@ def generate_follow_request(follower: User, followed: User) -> FollowRequest:
     db.session.add(follow_request)
     db.session.commit()
     return follow_request
+
+
+def jsonify_dict(data: Dict) -> Dict:
+    return loads(flask_json.dumps(data))
