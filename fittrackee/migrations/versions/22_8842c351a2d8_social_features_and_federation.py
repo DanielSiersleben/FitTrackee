@@ -1,7 +1,7 @@
 """init social features and federation with ActivityPub Actor
 
 Revision ID: 8842c351a2d8
-Revises: 4e8597c50064
+Revises: ed409fd9db9d
 Create Date: 2021-01-10 16:02:43.811023
 
 """
@@ -17,7 +17,7 @@ from fittrackee.federation.utils import generate_keys, get_ap_url, remove_url_sc
 
 # revision identifiers, used by Alembic.
 revision = '8842c351a2d8'
-down_revision = '07188ca7620a'
+down_revision = 'ed409fd9db9d'
 branch_labels = None
 depends_on = None
 

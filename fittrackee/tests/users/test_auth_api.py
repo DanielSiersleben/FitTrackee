@@ -993,7 +993,9 @@ class TestUserSportPreferencesReset(ApiTestCaseMixin):
     def test_it_returns_error_if_sport_does_not_exist(
         self, app: Flask, user_1: User
     ) -> None:
-        client, auth_token = self.get_test_client_and_auth_token(app)
+        client, auth_token = self.get_test_client_and_auth_token(
+            app, user_1.email
+        )
 
         response = client.delete(
             '/api/auth/profile/reset/sports/1',
@@ -1012,7 +1014,9 @@ class TestUserSportPreferencesReset(ApiTestCaseMixin):
         sport_1_cycling: Sport,
         user_sport_1_preference: UserSportPreference,
     ) -> None:
-        client, auth_token = self.get_test_client_and_auth_token(app)
+        client, auth_token = self.get_test_client_and_auth_token(
+            app, user_1.email
+        )
 
         response = client.delete(
             f'/api/auth/profile/reset/sports/{sport_1_cycling.id}',
@@ -1031,7 +1035,9 @@ class TestUserSportPreferencesReset(ApiTestCaseMixin):
     def test_it_does_not_raise_error_if_sport_preferences_do_not_exist(
         self, app: Flask, user_1: User, sport_1_cycling: Sport
     ) -> None:
-        client, auth_token = self.get_test_client_and_auth_token(app)
+        client, auth_token = self.get_test_client_and_auth_token(
+            app, user_1.email
+        )
 
         response = client.delete(
             f'/api/auth/profile/reset/sports/{sport_1_cycling.id}',
