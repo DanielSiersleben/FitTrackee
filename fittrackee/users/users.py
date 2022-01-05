@@ -34,7 +34,6 @@ from .exceptions import (
     UserNotFoundException,
 )
 from .models import FollowRequest, User, UserSportPreference
-from .roles import UserRole
 
 users_blueprint = Blueprint('users', __name__)
 
@@ -84,10 +83,9 @@ def get_users_list(auth_user: User, remote: bool = False) -> Dict:
         .paginate(page, per_page, False)
     )
     users = users_pagination.items
-    role = UserRole.ADMIN if auth_user.admin else UserRole.USER
     return {
         'status': 'success',
-        'data': {'users': [user.serialize(role) for user in users]},
+        'data': {'users': [user.serialize(auth_user) for user in users]},
         'pagination': {
             'has_next': users_pagination.has_next,
             'has_prev': users_pagination.has_prev,
@@ -465,15 +463,12 @@ def get_single_user(
     :statuscode 404:
         - user does not exist
     """
-    role = None
-    if auth_user is not None:
-        role = UserRole.ADMIN if auth_user.admin else UserRole.USER
     try:
         user = User.query.filter_by(username=user_name).first()
         if user:
             return {
                 'status': 'success',
-                'data': {'users': [user.serialize(role=role)]},
+                'data': {'users': [user.serialize(auth_user)]},
             }
     except ValueError:
         pass
@@ -639,7 +634,7 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
         db.session.commit()
         return {
             'status': 'success',
-            'data': {'users': [user.serialize(role=UserRole.ADMIN)]},
+            'data': {'users': [user.serialize(auth_user)]},
         }
     except exc.StatementError as e:
         return handle_error_and_return_response(e, db=db)
@@ -840,10 +835,7 @@ def get_user_relationships(
         'status': 'success',
         'data': {
             relation: [
-                user.serialize(
-                    role=UserRole.ADMIN if auth_user.admin else UserRole.USER
-                )
-                for user in paginated_relations.items
+                user.serialize(auth_user) for user in paginated_relations.items
             ]
         },
         'pagination': {

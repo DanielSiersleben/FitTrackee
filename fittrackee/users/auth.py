@@ -27,7 +27,6 @@ from fittrackee.workouts.utils_files import get_absolute_file_path
 from .decorators import authenticate
 from .models import User, UserSportPreference
 from .privacy_levels import PrivacyLevel
-from .roles import UserRole
 from .utils import check_passwords, register_controls
 from .utils_token import decode_user_token
 
@@ -392,7 +391,7 @@ def get_authenticated_user_profile(
     """
     return {
         'status': 'success',
-        'data': auth_user.serialize(role=UserRole.AUTH_USER),
+        'data': auth_user.serialize(auth_user),
     }
 
 
@@ -555,7 +554,7 @@ def edit_user(auth_user: User) -> Union[Dict, HttpResponse]:
         return {
             'status': 'success',
             'message': 'user profile updated',
-            'data': auth_user.serialize(role=UserRole.AUTH_USER),
+            'data': auth_user.serialize(auth_user),
         }
 
     # handler errors
@@ -709,7 +708,7 @@ def edit_user_preferences(auth_user: User) -> Union[Dict, HttpResponse]:
         return {
             'status': 'success',
             'message': 'user preferences updated',
-            'data': auth_user.serialize(role=UserRole.AUTH_USER),
+            'data': auth_user.serialize(auth_user),
         }
 
     # handler errors
