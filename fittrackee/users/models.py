@@ -333,6 +333,18 @@ class User(BaseModel):
         )
         return follow_request
 
+    def is_followed_by(self, user: 'User') -> bool:
+        follow_request = FollowRequest.query.filter_by(
+            follower_user_id=user.id, followed_user_id=self.id
+        ).first()
+        return follow_request.is_approved if follow_request else False
+
+    def follows(self, user: 'User') -> bool:
+        follow_request = FollowRequest.query.filter_by(
+            follower_user_id=self.id, followed_user_id=user.id
+        ).first()
+        return follow_request.is_approved if follow_request else False
+
     def get_user_url(self) -> str:
         """Return user url on user interface"""
         return f"{current_app.config['UI_URL']}/users/{self.username}"
@@ -422,6 +434,12 @@ class User(BaseModel):
                     'weekm': self.weekm,
                 },
             }
+
+        if current_user is not None and role != UserRole.AUTH_USER:
+            serialized_user['follows'] = self.follows(current_user)
+            serialized_user['is_followed_by'] = self.is_followed_by(
+                current_user
+            )
 
         return serialized_user
 
