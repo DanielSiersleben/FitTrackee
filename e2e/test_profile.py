@@ -13,8 +13,8 @@ class TestProfile:
         assert '0\nworkouts' in user_header.text
         assert '0\nkm' in user_header.text
         assert '0\nsports' in user_header.text
-        assert '0\nfollowing' in user_header.text
-        assert '0\nfollowers' in user_header.text
+        # assert '0\nfollowing' in user_header.text
+        # assert '0\nfollowers' in user_header.text
 
         user_infos = selenium.find_element_by_id('user-infos')
         assert 'Registration date' in user_infos.text

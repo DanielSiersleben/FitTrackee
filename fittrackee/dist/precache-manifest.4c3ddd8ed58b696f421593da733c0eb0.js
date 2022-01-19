@@ -56,6 +56,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/weather/wind.svg"
   },
   {
+    "revision": "375196b7ade7c07c3b64ac4cb8b850a8",
+    "url": "/img/workouts/finish.svg"
+  },
+  {
     "revision": "a41d3168615e9c642fe96c36bcca146d",
     "url": "/img/workouts/map.svg"
   },
@@ -64,7 +68,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/workouts/mountains.svg"
   },
   {
-    "revision": "3be701dab1462c6aed8c588e7e2a1627",
+    "revision": "97f6a197b6c2869e0cb2ff0e7697af86",
+    "url": "/img/workouts/start.svg"
+  },
+  {
+    "revision": "e9074c535af74e7b85362dc2eb23feaa",
     "url": "/index.html"
   },
   {
@@ -76,12 +84,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/robots.txt"
   },
   {
-    "revision": "afb0b5fdc09248f526bc",
-    "url": "/static/css/admin.051009d0.css"
+    "revision": "8f4c00514b231a913495",
+    "url": "/static/css/admin.e77f8b26.css"
   },
   {
-    "revision": "38035481c05fb91a6e36",
-    "url": "/static/css/app.c7315bca.css"
+    "revision": "4d38944ec60644a91359",
+    "url": "/static/css/app.af0fab25.css"
   },
   {
     "revision": "82c1118c918377daaa71a320ab8eea42",
@@ -92,11 +100,11 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/css/leaflet.css"
   },
   {
-    "revision": "08337bf55c897dd5d24d",
-    "url": "/static/css/profile.a94e4538.css"
+    "revision": "00382d944a1bc6fca08b",
+    "url": "/static/css/profile.8b668068.css"
   },
   {
-    "revision": "034f9240520dfc201c93",
+    "revision": "ed921b9e1d1e590ca0ec",
     "url": "/static/css/reset.fc19709e.css"
   },
   {
@@ -104,8 +112,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/css/statistics.2afdc8a9.css"
   },
   {
-    "revision": "7aed92d2a559972a1a09",
-    "url": "/static/css/workouts.45a25b09.css"
+    "revision": "5cad43c771a5e97d7b9f",
+    "url": "/static/css/workouts.67711f5b.css"
   },
   {
     "revision": "e719f9244c69e28e7d00e725ca1e280e",
@@ -188,12 +196,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/img/pt-sans-v9-latin-regular.f1f73e45.svg"
   },
   {
-    "revision": "afb0b5fdc09248f526bc",
-    "url": "/static/js/admin.dff1d1bb.js"
+    "revision": "8f4c00514b231a913495",
+    "url": "/static/js/admin.5f46d0fe.js"
   },
   {
-    "revision": "38035481c05fb91a6e36",
-    "url": "/static/js/app.ab675ffc.js"
+    "revision": "4d38944ec60644a91359",
+    "url": "/static/js/app.fa3ee1c1.js"
   },
   {
     "revision": "bd7d183c9f68e5f4027d",
@@ -216,23 +224,23 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/js/chunk-2d22523a.4b710d99.js"
   },
   {
-    "revision": "4adc3eb42c025dc52979",
-    "url": "/static/js/chunk-vendors.1e4c4d85.js"
+    "revision": "47ba7e29b140bfa35ca2",
+    "url": "/static/js/chunk-vendors.b837642f.js"
   },
   {
-    "revision": "08337bf55c897dd5d24d",
-    "url": "/static/js/profile.1bd42b8c.js"
+    "revision": "00382d944a1bc6fca08b",
+    "url": "/static/js/profile.d25975e2.js"
   },
   {
-    "revision": "034f9240520dfc201c93",
-    "url": "/static/js/reset.50f37e06.js"
+    "revision": "ed921b9e1d1e590ca0ec",
+    "url": "/static/js/reset.ca898ebe.js"
   },
   {
     "revision": "d772b2a24985f6471afd",
     "url": "/static/js/statistics.d03ca304.js"
   },
   {
-    "revision": "7aed92d2a559972a1a09",
-    "url": "/static/js/workouts.803d04b4.js"
+    "revision": "5cad43c771a5e97d7b9f",
+    "url": "/static/js/workouts.37e2d33a.js"
   }
 ]);
