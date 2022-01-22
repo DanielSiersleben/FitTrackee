@@ -21,6 +21,9 @@
               id="username"
               :disabled="registration_disabled"
               required
+              pattern="[a-zA-Z0-9_]+"
+              minlength="3"
+              maxlength="30"
               @invalid="invalidateForm"
               v-model="formData.username"
               :placeholder="$t('user.USERNAME')"
@@ -44,6 +47,7 @@
               id="password"
               :disabled="registration_disabled"
               required
+              minlength="8"
               @invalid="invalidateForm"
               type="password"
               v-model="formData.password"
@@ -58,6 +62,7 @@
               id="confirm-password"
               :disabled="registration_disabled"
               type="password"
+              minlength="8"
               required
               @invalid="invalidateForm"
               v-model="formData.password_conf"
