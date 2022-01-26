@@ -8,10 +8,6 @@ from sqlalchemy import exc
 
 from fittrackee import appLog, db
 from fittrackee.federation.decorators import federation_required
-from fittrackee.federation.exceptions import (
-    ActorNotFoundException,
-    DomainNotFoundException,
-)
 from fittrackee.federation.models import Domain
 from fittrackee.federation.utils_user import (
     FULL_NAME_REGEX,
@@ -51,8 +47,9 @@ def get_users_list(auth_user: User, remote: bool = False) -> Dict:
     query = params.get('q')
     if remote and query and re.match(FULL_NAME_REGEX, query):
         try:
-            user = get_user_from_username(query, with_creation=True)
-        except Exception:  # noqa
+            user = get_user_from_username(query, with_action='creation')
+        except Exception as e:  # noqa
+            appLog.error(f"Error when searching user '{query}': {e}")
             return {
                 'status': 'success',
                 'data': {'users': []},
@@ -514,18 +511,13 @@ def get_single_user(
         - user does not exist
     """
     try:
-        user = get_user_from_username(user_name)
+        user = get_user_from_username(user_name, with_action='refresh')
         if user:
             return {
                 'status': 'success',
                 'data': {'users': [user.serialize(auth_user)]},
             }
-    except (
-        ValueError,
-        ActorNotFoundException,
-        DomainNotFoundException,
-        UserNotFoundException,
-    ):
+    except (ValueError, UserNotFoundException):
         pass
     return UserNotFoundErrorResponse()
 
@@ -557,12 +549,12 @@ def get_picture(user_name: str) -> Any:
 
     """
     try:
-        user = User.query.filter_by(username=user_name).first()
-        if not user:
-            return UserNotFoundErrorResponse()
+        user = get_user_from_username(user_name)
         if user.picture is not None:
             picture_path = get_absolute_file_path(user.picture)
             return send_file(picture_path)
+    except UserNotFoundException:
+        return UserNotFoundErrorResponse()
     except Exception:
         pass
     return NotFoundErrorResponse('No picture.')
@@ -683,9 +675,9 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
         return InvalidPayloadErrorResponse()
 
     try:
-        user = User.query.filter_by(username=user_name).first()
-        if not user:
-            return UserNotFoundErrorResponse()
+        user = get_user_from_username(user_name)
+        if user.is_remote:
+            return InvalidPayloadErrorResponse()
 
         user.admin = user_data['admin']
         db.session.commit()
@@ -693,6 +685,8 @@ def update_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
             'status': 'success',
             'data': {'users': [user.serialize(auth_user)]},
         }
+    except UserNotFoundException:
+        return UserNotFoundErrorResponse()
     except exc.StatementError as e:
         return handle_error_and_return_response(e, db=db)
 
@@ -742,9 +736,14 @@ def delete_user(
 
     """
     try:
-        user = User.query.filter_by(username=user_name).first()
-        if not user:
+        try:
+            user = get_user_from_username(user_name)
+        except UserNotFoundException:
             return UserNotFoundErrorResponse()
+
+        if user.is_remote:
+            # TODO: handle properly remote user deletion
+            return InvalidPayloadErrorResponse()
 
         if user.id != auth_user.id and not auth_user.admin:
             return ForbiddenErrorResponse()
@@ -852,11 +851,7 @@ def follow_user(auth_user: User, user_name: str) -> Union[Dict, HttpResponse]:
 
     try:
         target_user = get_user_from_username(user_name)
-    except (
-        ActorNotFoundException,
-        DomainNotFoundException,
-        UserNotFoundException,
-    ) as e:
+    except UserNotFoundException as e:
         appLog.error(f'Error when following a user: {e}')
         return UserNotFoundErrorResponse()
 
@@ -929,11 +924,7 @@ def unfollow_user(
 
     try:
         target_user = get_user_from_username(user_name)
-    except (
-        ActorNotFoundException,
-        DomainNotFoundException,
-        UserNotFoundException,
-    ) as e:
+    except UserNotFoundException as e:
         appLog.error(f'Error when following a user: {e}')
         return UserNotFoundErrorResponse()
 
@@ -953,8 +944,9 @@ def get_user_relationships(
     except ValueError:
         page = 1
 
-    user = User.query.filter_by(username=user_name).first()
-    if not user:
+    try:
+        user = get_user_from_username(user_name)
+    except UserNotFoundException:
         return UserNotFoundErrorResponse()
 
     relations_object = (
