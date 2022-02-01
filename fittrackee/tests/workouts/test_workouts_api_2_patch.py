@@ -10,7 +10,7 @@ from fittrackee.workouts.models import Sport, Workout
 from fittrackee.workouts.utils_id import decode_short_id
 
 from ..test_case_mixins import ApiTestCaseMixin
-from .utils import get_random_short_id, post_an_workout
+from .utils import get_random_short_id, post_a_workout
 
 
 def assert_workout_data_with_gpx(data: Dict, sport_id: int) -> None:
@@ -57,7 +57,7 @@ def assert_workout_data_with_gpx(data: Dict, sport_id: int) -> None:
 
 
 class TestEditWorkoutWithGpx(ApiTestCaseMixin):
-    def test_it_updates_title_for_an_workout_with_gpx(
+    def test_it_updates_title_for_a_workout_with_gpx(
         self,
         app: Flask,
         user_1: User,
@@ -65,7 +65,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
 
         response = client.patch(
@@ -101,7 +101,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
 
         response = client.patch(
@@ -125,7 +125,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        token, workout_short_id = post_an_workout(
+        token, workout_short_id = post_a_workout(
             app, gpx_file, notes=uuid4().hex
         )
         client = app.test_client()
@@ -143,7 +143,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         assert len(data['data']['workouts']) == 1
         assert data['data']['workouts'][0]['notes'] == ''
 
-    def test_it_raises_403_when_editing_an_workout_from_different_user(
+    def test_it_raises_403_when_editing_a_workout_from_different_user(
         self,
         app: Flask,
         user_1: User,
@@ -152,7 +152,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        _, workout_short_id = post_an_workout(app, gpx_file)
+        _, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
         resp_login = client.post(
             '/api/auth/login',
@@ -183,7 +183,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
 
         response = client.patch(
@@ -204,7 +204,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
     def test_it_returns_400_if_payload_is_empty(
         self, app: Flask, user_1: User, sport_1_cycling: Sport, gpx_file: str
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
 
         response = client.patch(
@@ -222,7 +222,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
     def test_it_raises_500_if_sport_does_not_exist(
         self, app: Flask, user_1: User, sport_1_cycling: Sport, gpx_file: str
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         client = app.test_client()
 
         response = client.patch(
@@ -242,7 +242,7 @@ class TestEditWorkoutWithGpx(ApiTestCaseMixin):
 
 
 class TestEditWorkoutWithoutGpx(ApiTestCaseMixin):
-    def test_it_updates_an_workout_wo_gpx(
+    def test_it_updates_a_workout_wo_gpx(
         self,
         app: Flask,
         user_1: User,
@@ -383,7 +383,7 @@ class TestEditWorkoutWithoutGpx(ApiTestCaseMixin):
         assert len(data['data']['workouts']) == 1
         assert data['data']['workouts'][0]['notes'] == ''
 
-    def test_returns_403_when_editing_an_workout_wo_gpx_from_different_user(
+    def test_returns_403_when_editing_a_workout_wo_gpx_from_different_user(
         self,
         app: Flask,
         user_1: User,
@@ -410,12 +410,12 @@ class TestEditWorkoutWithoutGpx(ApiTestCaseMixin):
             headers=dict(Authorization=f'Bearer {auth_token}'),
         )
 
-        data = json.loads(response.data.decode())
         assert response.status_code == 403
+        data = json.loads(response.data.decode())
         assert 'error' in data['status']
         assert 'you do not have permissions' in data['message']
 
-    def test_it_updates_an_workout_wo_gpx_with_timezone(
+    def test_it_updates_a_workout_wo_gpx_with_timezone(
         self,
         app: Flask,
         user_1_paris: User,
@@ -490,7 +490,7 @@ class TestEditWorkoutWithoutGpx(ApiTestCaseMixin):
         assert records[3]['workout_date'] == 'Tue, 15 May 2018 13:05:00 GMT'
         assert records[3]['value'] == 8.0
 
-    def test_it_updates_only_sport_and_distance_an_workout_wo_gpx(
+    def test_it_updates_only_sport_and_distance_a_workout_wo_gpx(
         self,
         app: Flask,
         user_1: User,
@@ -640,7 +640,7 @@ class TestEditWorkoutWithoutGpx(ApiTestCaseMixin):
 
 
 class TestRefreshWorkoutWithGpx:
-    def test_refresh_an_workout_with_gpx(
+    def test_refresh_a_workout_with_gpx(
         self,
         app: Flask,
         user_1: User,
@@ -648,7 +648,7 @@ class TestRefreshWorkoutWithGpx:
         sport_2_running: Sport,
         gpx_file: str,
     ) -> None:
-        token, workout_short_id = post_an_workout(app, gpx_file)
+        token, workout_short_id = post_a_workout(app, gpx_file)
         workout_uuid = decode_short_id(workout_short_id)
         client = app.test_client()
 
