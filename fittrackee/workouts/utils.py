@@ -15,8 +15,8 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 from fittrackee import db
+from fittrackee.privacy_levels import PrivacyLevel
 from fittrackee.users.models import User, UserSportPreference
-from fittrackee.users.privacy_levels import PrivacyLevel
 
 from .exceptions import WorkoutException
 from .models import Sport, Workout, WorkoutSegment, get_map_visibility

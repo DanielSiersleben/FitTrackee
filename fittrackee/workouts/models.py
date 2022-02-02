@@ -12,7 +12,7 @@ from sqlalchemy.orm.session import Session, object_session
 from sqlalchemy.types import JSON, Enum
 
 from fittrackee import BaseModel, db
-from fittrackee.users.privacy_levels import PrivacyLevel, get_map_visibility
+from fittrackee.privacy_levels import PrivacyLevel, get_map_visibility
 
 from .exceptions import WorkoutForbiddenException
 from .utils_files import get_absolute_file_path

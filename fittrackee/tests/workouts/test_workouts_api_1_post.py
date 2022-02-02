@@ -9,8 +9,8 @@ from unittest.mock import Mock
 import pytest
 from flask import Flask
 
+from fittrackee.privacy_levels import PrivacyLevel
 from fittrackee.users.models import User
-from fittrackee.users.privacy_levels import PrivacyLevel
 from fittrackee.workouts.models import Sport, Workout
 from fittrackee.workouts.utils_id import decode_short_id
 
