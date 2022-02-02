@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 
 from fittrackee import db
 from fittrackee.users.models import User, UserSportPreference
+from fittrackee.users.privacy_levels import PrivacyLevel
 
 from .exceptions import WorkoutException
 from .models import Sport, Workout, WorkoutSegment
@@ -118,6 +119,12 @@ def create_workout(
         duration=duration,
     )
     new_workout.notes = workout_data.get('notes')
+    new_workout.map_visibility = PrivacyLevel(
+        workout_data.get('map_visibility', user.map_visibility.value)
+    )
+    new_workout.workout_visibility = PrivacyLevel(
+        workout_data.get('workout_visibility', user.workouts_visibility.value)
+    )
 
     if title is not None and title != '':
         new_workout.title = title
@@ -292,7 +299,7 @@ def process_one_gpx_file(
     params: Dict, filename: str, stopped_speed_threshold: float
 ) -> Workout:
     """
-    Get all data from a gpx file to create an workout with map image
+    Get all data from a gpx file to create a workout with map image
     """
     try:
         gpx_data, map_data, weather_data = get_gpx_info(
