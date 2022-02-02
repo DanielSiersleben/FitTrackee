@@ -12,7 +12,7 @@ from sqlalchemy.orm.session import Session, object_session
 from sqlalchemy.types import JSON, Enum
 
 from fittrackee import BaseModel, db
-from fittrackee.users.privacy_levels import PrivacyLevel
+from fittrackee.users.privacy_levels import PrivacyLevel, get_map_visibility
 
 from .exceptions import WorkoutForbiddenException
 from .utils_files import get_absolute_file_path
@@ -195,13 +195,7 @@ class Workout(BaseModel):
 
     @property
     def calculated_map_visibility(self) -> PrivacyLevel:
-        # workout privacy overrides map privacy, when stricter
-        if self.workout_visibility == PrivacyLevel.PRIVATE or (
-            self.workout_visibility == PrivacyLevel.FOLLOWERS
-            and self.map_visibility == PrivacyLevel.PUBLIC
-        ):
-            return self.workout_visibility
-        return self.map_visibility
+        return get_map_visibility(self.map_visibility, self.workout_visibility)
 
     def _can_see_map_data(self, user_status: str) -> bool:
         return (
