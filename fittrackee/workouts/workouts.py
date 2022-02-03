@@ -1302,6 +1302,8 @@ def update_workout(
             workout, 'workout_visibility', auth_user
         )
         if not can_view:
+            return DataNotFoundErrorResponse('workouts')
+        if auth_user.id != workout.user.id:
             return ForbiddenErrorResponse()
 
         workout = edit_workout(workout, workout_data, auth_user)
@@ -1363,6 +1365,8 @@ def delete_workout(
             workout, 'workout_visibility', auth_user
         )
         if not can_view:
+            return DataNotFoundErrorResponse('workouts')
+        if auth_user.id != workout.user.id:
             return ForbiddenErrorResponse()
 
         db.session.delete(workout)
